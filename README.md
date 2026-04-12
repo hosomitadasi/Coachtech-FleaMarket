@@ -1,14 +1,17 @@
 # 環境構築
+1. Gitでリンクをコピー、または下記に記載のURLをコピーした後、ターミナルでプロジェクトディレクトリを作成したら直下で以下のコマンドを実行してください。
 
-1. Dockerを起動する
+```
+git clone https://github.com/hosomitadasi/CoachtechPro-FleaMarket.git
+```
 
-2. プロジェクト直下で、以下のコマンドを実行する
+2. Dockerを起動したら、プロジェクト直下で以下のコマンドを実行してください。
 
 ```
 make init
 ```
+3．利用されているmailtrapとstripeのキーをdocker-compose.ymlと.envに追加してください。
 
-※Makefileは実行するコマンドを省略することができる便利な設定ファイルです。コマンドの入力を効率的に行えるようになります。<br>
 
 ## メール認証
 mailtrapというツールを使用しています。<br>
@@ -134,6 +137,10 @@ name: 一般ユーザ
 email: general2@gmail.com  
 password: password  
 -------------------------
+name: 取引ユーザ
+email:
+password:
+-------------------------
 
 ## PHPUnitを利用したテストに関して
 以下のコマンド:  
@@ -149,7 +156,3 @@ php artisan migrate:fresh --env=testing
 ./vendor/bin/phpunit
 ```
 ※.env.testingにもStripeのAPIキーを設定してください。  
-
-## 生徒様へ
-普段よりお世話になっております。  
-こちらの模範解答に関するご質問、またこちらに不備を見つけた、などの際は気兼ねなく申し付けください。
