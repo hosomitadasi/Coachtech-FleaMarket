@@ -9,14 +9,14 @@ use Illuminate\Support\Facades\Auth;
 class Item extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'name',
         'price',
         'brand',
         'description',
         'img_url',
-        'user_id', 
+        'user_id',
         'condition_id',
     ];
 
@@ -63,21 +63,38 @@ class Item extends Model
         return Like::where('item_id', $this->id)->count();
     }
 
-    public function getComments(){
+    public function getComments()
+    {
         $comments = Comment::where('item_id', $this->id)->get();
         return $comments;
     }
 
-    public function sold(){
-        return SoldItem::where('item_id',$this->id)->exists();
+    public function sold()
+    {
+        return SoldItem::where('item_id', $this->id)->exists();
     }
 
-    public function mine(){
+    public function mine()
+    {
         return $this->user_id == Auth::id();
     }
 
-    public static function scopeItem($query, $item_name){
-        return $query->where('name', 'like', '%'.$item_name.'%');
+    public static function scopeItem($query, $item_name)
+    {
+        return $query->where('name', 'like', '%' . $item_name . '%');
     }
 
+    // 以降追加機能部分
+
+    // その商品に紐づくチャット履歴
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    // その商品に紐づく評価（通常、1つの商品に評価は1〜2件）
+    public function evaluations()
+    {
+        return $this->hasMany(Evaluation::class);
+    }
 }
