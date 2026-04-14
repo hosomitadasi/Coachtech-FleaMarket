@@ -10,36 +10,32 @@ use App\Http\Requests\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+// 追加したController
+use App\Http\Controllers\ChatController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
-Route::get('/',[ItemController::class, 'index'])->name('items.list');
-Route::get('/item/{item}',[ItemController::class, 'detail'])->name('item.detail');
+Route::get('/', [ItemController::class, 'index'])->name('items.list');
+Route::get('/item/{item}', [ItemController::class, 'detail'])->name('item.detail');
 Route::get('/item', [ItemController::class, 'search']);
 
-Route::middleware(['auth','verified'])->group(function () {
-    Route::get('/sell',[ItemController::class, 'sellView']);
-    Route::post('/sell',[ItemController::class, 'sellCreate']);
-    Route::post('/item/like/{item_id}',[LikeController::class, 'create']);
-    Route::post('/item/unlike/{item_id}',[LikeController::class, 'destroy']);
-    Route::post('/item/comment/{item_id}',[CommentController::class, 'create']);
-    Route::get('/purchase/{item_id}',[PurchaseController::class, 'index'])->middleware('purchase')->name('purchase.index');
-    Route::post('/purchase/{item_id}',[PurchaseController::class, 'purchase'])->middleware('purchase');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/sell', [ItemController::class, 'sellView']);
+    Route::post('/sell', [ItemController::class, 'sellCreate']);
+    Route::post('/item/like/{item_id}', [LikeController::class, 'create']);
+    Route::post('/item/unlike/{item_id}', [LikeController::class, 'destroy']);
+    Route::post('/item/comment/{item_id}', [CommentController::class, 'create']);
+    Route::get('/purchase/{item_id}', [PurchaseController::class, 'index'])->middleware('purchase')->name('purchase.index');
+    Route::post('/purchase/{item_id}', [PurchaseController::class, 'purchase'])->middleware('purchase');
     Route::get('/purchase/{item_id}/success', [PurchaseController::class, 'success']);
-    Route::get('/purchase/address/{item_id}',[PurchaseController::class, 'address']);
-    Route::post('/purchase/address/{item_id}',[PurchaseController::class, 'updateAddress']);
+    Route::get('/purchase/address/{item_id}', [PurchaseController::class, 'address']);
+    Route::post('/purchase/address/{item_id}', [PurchaseController::class, 'updateAddress']);
     Route::get('/mypage', [UserController::class, 'mypage']);
     Route::get('/mypage/profile', [UserController::class, 'profile']);
     Route::post('/mypage/profile', [UserController::class, 'updateProfile']);
+
+    // 新たに追加した分。取引チャット表示、取引チャットの送信、削除機能
+    Route::get('/chat', [ChatController::class, 'chatView']);
+    Route::post('/chat', [ChatController::class, 'chatCreate']);
+    Route::delete('/chat', [ChatController::class, 'chatDelete']);
 });
 
 Route::post('login', [AuthenticatedSessionController::class, 'store'])->middleware('email');

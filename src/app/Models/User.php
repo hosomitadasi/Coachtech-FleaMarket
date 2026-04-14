@@ -12,32 +12,17 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
@@ -80,5 +65,12 @@ class User extends Authenticatable implements MustVerifyEmail
     public function reviewsDone()
     {
         return $this->hasMany(Evaluation::class, 'evaluator_id');
+    }
+
+    public function averageStars()
+    {
+        // 評価が一件もない場合は null または 0 を返す
+        $avg = $this->evaluations()->avg('stars');
+        return $avg ? (int)round($avg) : null;
     }
 }
