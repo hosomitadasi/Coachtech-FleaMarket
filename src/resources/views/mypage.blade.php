@@ -23,7 +23,19 @@
                 <img id="myImage" class="user__icon" src="{{ asset('img/icon.png') }}" alt="">
                 @endif
             </div>
-            <p class="user__name">{{$user->name}}</p>
+            <div class="user__text-content">
+                <p class="user__name">{{$user->name}}</p>
+                <!-- 追加した平均評価機能 -->
+                <div class="user__rating">
+                    @php $stars = $user->averageStars(); @endphp
+                    @if($stars)
+                    @for ($i = 1; $i <= 5; $i++)
+                        <img src="{{ asset($i <= $stars ? 'img/rate_star.png' :'img/ignore_star.png') }}" class="star-icon">
+                        @endfor
+                        @endif
+                </div>
+            </div>
+
         </div>
         <div class="mypage__user--btn">
             <a class="btn2" href="/mypage/profile">プロフィールを編集</a>
@@ -31,9 +43,14 @@
     </div>
     <div class="border">
         <ul class="border__list">
-            <li><a href="/mypage?page=sell">出品した商品</a></li>
-            <li><a href="/mypage?page=buy">購入した商品</a></li>
-            <!-- ここに、「<li><a href="/mypage?page=chat">取引中の商品</a></li>」を実装 -->
+            <li class="{{ $page == 'sell' ? 'active' : '' }}"><a href="/mypage?page=sell">出品した商品</a></li>
+            <li class="{{ $page == 'buy' ? 'active' : '' }}"><a href="/mypage?page=buy">購入した商品</a></li>
+            <li class="{{ $page == 'chat' ? 'active' : '' }}">
+                <a href="/mypage?page=chat" style="color: {{ $page == 'chat' ? 'red' : '' }}">
+                    取引中の商品
+                    {{-- 全体の通知件数などがあればここに表示 --}}
+                </a>
+            </li>
         </ul>
     </div>
     <div class="items">
