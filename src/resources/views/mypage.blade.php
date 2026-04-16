@@ -1,15 +1,12 @@
 @extends('layouts.default')
 
-<!-- タイトル -->
 @section('title','マイページ')
 
-<!-- css読み込み -->
 @section('css')
 <link rel="stylesheet" href="{{ asset('/css/index.css')  }}">
 <link rel="stylesheet" href="{{ asset('/css/mypage.css')  }}">
 @endsection
 
-<!-- 本体 -->
 @section('content')
 
 @include('components.header')
@@ -56,16 +53,16 @@
     <div class="items">
         @foreach ($items as $item)
         <div class="item">
-            <a href="/item/{{$item->id}}">
-                @if ($item->sold())
-                <div class="item__img--container sold">
-                    <img src="{{ \Storage::url($item->img_url) }}" class="item__img" alt="商品画像">
+            <a href="{{ $page == 'chat' ? url('/chat?item_id='.$item->id) : url('/item/'.$item->id) }}">
+                <div class="item__img--container {{ $item->sold() ? 'sold' : '' }}">
+                    <img src="{{ \Storage::url($item->img_url) }}" class="item__img">
+                    @php
+                    $unreadCount = $item->messages()->where('user_id', '!=', Auth::id())->whereNull('read_at')->count();
+                    @endphp
+                    @if($page == 'chat' && $unreadCount > 0)
+                    <div class="unread-badge">{{ $unreadCount }}</div>
+                    @endif
                 </div>
-                @else
-                <div class="item__img--container">
-                    <img src="{{ \Storage::url($item->img_url) }}" class="item__img" alt="商品画像">
-                </div>
-                @endif
                 <p class="item__name">{{$item->name}}</p>
             </a>
         </div>

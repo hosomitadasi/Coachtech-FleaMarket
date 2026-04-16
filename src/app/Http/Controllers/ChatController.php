@@ -12,21 +12,46 @@ use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
 {
-    public function chatView()
+    public function chatView($item_id)
     {
+        $user = Auth::user();
+        $item = Item::with(['soldItem', 'messages.user.profile'])->findOrFail($item_id);
 
-        return view('chat', compact(''));
+        $partner = ($item->user_id === $user->id)
+            ? User::find($item->soldItem->user_id)
+            : $item->user;
+
+        $other_items = Item::whereHas('soldItem')
+            ->where(function ($query) use ($user) {
+                $query->where('user_id', $user->id)
+                    ->orWhereHas('soldItem', fn($q) => $q->where('user_id', $user->id));
+            })
+            ->where('id', '!=', $item_id)
+            ->get();
+
+        return view('chat', compact('user', 'item', 'partner', 'other_items'));
     }
 
-    public function chatCreate(ChatRequest $request)
+    public function chatCreate($item_id, MessageRequest $request)
     {
+        $img_url = null;
+        if ($request->hasFile('img_url')) {
+            $img_url = $request->file('img_url')->store('public/chat');
+        }
 
-        return view('chat', compact(''));
+        Message::create([
+            'user_id' => Auth::id(),
+            'item_id' => $item_id,
+            'text' => $request->text,
+            'img_url' => $img_url,
+        ]);
+
+        return back();
     }
 
-    public function chatUpdate(ChatRequest $request)
+    public function chatUpdate(MessageRequest $request)
     {
-        return view('chat', compact(''));
+        return back('chat', compact(''));
     }
 
     public function chatDelete($chat_id)

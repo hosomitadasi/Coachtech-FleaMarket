@@ -33,10 +33,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/mypage/profile', [UserController::class, 'updateProfile']);
 
     // 新たに追加した分。取引チャット表示、取引チャットの送信、編集、削除機能
-    Route::get('/chat', [ChatController::class, 'chatView']);
-    Route::post('/chat', [ChatController::class, 'chatCreate']);
-    Route::post('chat', [ChatController::class, 'chatUpdate']);
-    Route::delete('/chat', [ChatController::class, 'chatDelete']);
+    Route::get('/chat/{item_id}', [ChatController::class, 'chatView'])->name('chat.view');
+    Route::post('/chat/{item_id}', [ChatController::class, 'chatCreate']);
+    Route::post('/chat/update/{message_id}', [ChatController::class, 'chatUpdate']);
+    Route::delete('/chat/delete?{message_id}', [ChatController::class, 'chatDelete']);
 });
 
 Route::post('login', [AuthenticatedSessionController::class, 'store'])->middleware('email');

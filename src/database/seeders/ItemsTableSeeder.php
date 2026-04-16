@@ -9,22 +9,18 @@ use App\Models\Like;
 
 class ItemsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
+
     public function run()
     {
         $params = [
             [
                 'name' => '腕時計',
                 'price' => 15000,
-                'brand'=> 'Rolax',
+                'brand' => 'Rolax',
                 'description' => 'スタイリッシュなデザインのメンズ腕時計',
                 'img_url' => 'public/img/mens_clock.jpg',
                 'user_id' => 2,
-                'condition_id' => Condition::$UNUSED,
+                'condition_id' => 1,
             ],
             [
                 'name' => 'HDD',
@@ -33,7 +29,7 @@ class ItemsTableSeeder extends Seeder
                 'description' => '高速で信頼性の高いハードディスク',
                 'img_url' => 'public/img/hard_disk.jpg',
                 'user_id' => 2,
-                'condition_id' => Condition::$HARMLESS,
+                'condition_id' => 2,
             ],
             [
                 'name' => '玉ねぎ3束',
@@ -42,7 +38,7 @@ class ItemsTableSeeder extends Seeder
                 'description' => '新鮮な玉ねぎ3束のセット',
                 'img_url' => 'public/img/onion.jpg',
                 'user_id' => 2,
-                'condition_id' => Condition::$HARMED,
+                'condition_id' => 3,
             ],
             [
                 'name' => '革靴',
@@ -51,7 +47,7 @@ class ItemsTableSeeder extends Seeder
                 'description' => 'クラシックなデザインの革靴',
                 'img_url' => 'public/img/leather_shoes.jpg',
                 'user_id' => 2,
-                'condition_id' => Condition::$BAD_CONDITION,
+                'condition_id' => 1,
             ],
             [
                 'name' => 'ノートPC',
@@ -60,7 +56,7 @@ class ItemsTableSeeder extends Seeder
                 'description' => '高性能なノートパソコン',
                 'img_url' => 'public/img/laptop_PC.jpg',
                 'user_id' => 2,
-                'condition_id' => Condition::$UNUSED,
+                'condition_id' => 1,
             ],
             [
                 'name' => 'マイク',
@@ -68,8 +64,8 @@ class ItemsTableSeeder extends Seeder
                 'brand' => '',
                 'description' => '高音質のレコーディング用マイク',
                 'img_url' => 'public/img/mic.jpg',
-                'user_id' => 2,
-                'condition_id' => Condition::$HARMLESS,
+                'user_id' => 1,
+                'condition_id' => 2,
             ],
             [
                 'name' => 'ショルダーバッグ',
@@ -78,7 +74,7 @@ class ItemsTableSeeder extends Seeder
                 'description' => 'おしゃれなショルダーバッグ',
                 'img_url' => 'public/img/shoulder_bag.jpg',
                 'user_id' => 1,
-                'condition_id' => Condition::$HARMED,
+                'condition_id' => 3,
             ],
             [
                 'name' => 'タンブラー',
@@ -87,7 +83,7 @@ class ItemsTableSeeder extends Seeder
                 'description' => '使いやすいタンブラー',
                 'img_url' => 'public/img/tumbler.jpg',
                 'user_id' => 1,
-                'condition_id' => Condition::$BAD_CONDITION,
+                'condition_id' => 4,
             ],
             [
                 'name' => 'コーヒーミル',
@@ -96,7 +92,7 @@ class ItemsTableSeeder extends Seeder
                 'description' => '手動のコーヒーミル',
                 'img_url' => 'public/img/coffer_mill.jpg',
                 'user_id' => 1,
-                'condition_id' => Condition::$UNUSED,
+                'condition_id' => 1,
             ],
             [
                 'name' => 'メイクセット',
@@ -105,22 +101,12 @@ class ItemsTableSeeder extends Seeder
                 'description' => '便利なメイクアップセット',
                 'img_url' => 'public/img/make_set.jpg',
                 'user_id' => 1,
-                'condition_id' => Condition::$HARMLESS,
+                'condition_id' => 2,
             ],
         ];
 
-        $range = count($params);
-        for ($i = 0; $i < $range; $i++){
-            Item::create($params[$i]);
+        foreach ($params as $param) {
+            Item::create($param);
         }
-
-        Like::create([
-            'user_id' => 1,
-            'item_id' => 1,
-        ]);
-        Like::create([
-            'user_id' => 2,
-            'item_id' => 7,
-        ]);
     }
 }

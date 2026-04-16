@@ -9,27 +9,22 @@ use App\Models\User;
 
 class UsersTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
+
     public function run()
     {
-        $param = [
-            'name' => '一般ユーザ1',
-            'email' => 'general1@gmail.com',
-            'email_verified_at' => Carbon::now(),
-            'password' => Hash::make('password'),
+        $users = [
+            ['name' => 'テストユーザー1', 'email' => 'user1@example.com'],
+            ['name' => 'テストユーザー2', 'email' => 'user2@example.com'],
+            ['name' => 'テストユーザー3', 'email' => 'user3@example.com'],
         ];
-        User::create($param);
 
-        $param = [
-            'name' => '一般ユーザ2',
-            'email' => 'general2@gmail.com',
-            'email_verified_at' => Carbon::now(),
-            'password' => Hash::make('password'),
-        ];
-        User::create($param);
+        foreach ($users as $user) {
+            User::create([
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'email_verified_at' => Carbon::now(),
+                'password' => Hash::make('password'),
+            ]);
+        }
     }
 }

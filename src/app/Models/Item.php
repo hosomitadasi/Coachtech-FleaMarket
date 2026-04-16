@@ -45,6 +45,11 @@ class Item extends Model
         return $this->hasMany('App\Models\CategoryItem');
     }
 
+    public function soldItem()
+    {
+        return $this->hasOne(SoldItem::class);
+    }
+
     public function categories()
     {
         $categories = $this->categoryItem->map(function ($item) {
