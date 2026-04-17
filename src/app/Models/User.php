@@ -69,8 +69,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function averageStars()
     {
-        // 評価が一件もない場合は null または 0 を返す
-        $avg = $this->evaluations()->avg('stars');
-        return $avg ? (int)round($avg) : null;
+        $avg = \App\Models\Evaluation::where('user_id', $this->id)->avg('star');
+        return $avg ? round($avg) : null;
     }
 }

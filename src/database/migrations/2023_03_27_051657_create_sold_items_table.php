@@ -6,11 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateSoldItemsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+
     public function up()
     {
         Schema::create('sold_items', function (Blueprint $table) {
@@ -19,15 +15,11 @@ class CreateSoldItemsTable extends Migration
             $table->string('sending_postcode');
             $table->string('sending_address');
             $table->string('sending_building')->nullable();
+            $table->integer('status')->default(0)->after('user_id');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('sold_items');

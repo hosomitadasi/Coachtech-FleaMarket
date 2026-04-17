@@ -53,7 +53,7 @@
     <div class="items">
         @foreach ($items as $item)
         <div class="item">
-            <a href="{{ $page == 'chat' ? url('/chat?item_id='.$item->id) : url('/item/'.$item->id) }}">
+            <a href="{{ $page == 'chat' ? route('chat.view', ['item_id' => $item->id]) : url('/item/'.$item->id) }}">
                 <div class="item__img--container {{ $item->sold() ? 'sold' : '' }}">
                     <img src="{{ \Storage::url($item->img_url) }}" class="item__img">
                     @php

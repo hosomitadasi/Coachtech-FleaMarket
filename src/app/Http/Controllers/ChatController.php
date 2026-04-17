@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Message;
 use App\Models\User;
 use App\Models\Item;
-use App\Http\Requests\ChatRequest;
+use App\Http\Requests\MessageRequest;
 use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
@@ -42,21 +42,26 @@ class ChatController extends Controller
         Message::create([
             'user_id' => Auth::id(),
             'item_id' => $item_id,
-            'text' => $request->text,
+            'text' => $request->text ?? '',
             'img_url' => $img_url,
         ]);
 
-        return back();
+        return back()->with('success', 'メッセージを投稿しました');
     }
 
-    public function chatUpdate(MessageRequest $request)
+    public function chatUpdate($message_id, MessageRequest $request)
     {
-        return back('chat', compact(''));
+        $message = Message::where('user_id', Auth::id())->findOrFail($message_id);
+        $message->update([
+            'text' => $request->text
+        ]);
+
+        return back()->with('success', 'メッセージを更新しました');
     }
 
-    public function chatDelete($chat_id)
+    public function chatDelete($message_id)
     {
-        Message::where(['user_id' => Auth::id(), 'chat_id' => $chat_id])->delete();
-        return back();
+        Message::where('user_id', Auth::id())->where('id', $message_id)->delete();
+        return back()->with('success', 'メッセージを削除しました');
     }
 }

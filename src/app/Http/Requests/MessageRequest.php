@@ -15,16 +15,17 @@ class MessageRequest extends FormRequest
     public function rules()
     {
         return [
-            'text' => 'required|max:400',
-            'img_url' => 'image|mimes:jpeg,png',
+            'text' => 'required_without:img_url|max:400',
+            'img_url' => 'nullable|image|mimes:jpeg,png',
         ];
     }
 
     public function messages()
     {
         return [
-            'text.required' => '本文を入力してください',
-            'img_url' => '「.png」または「.jpeg」形式でアップロードしてください',
+            'text.required_without' => '本文を入力してください',
+            'img_url.image' => '画像ファイルを選択してください',
+            'img_url.mimes' => '「.png」または「.jpeg」形式でアップロードしてください',
             'text.max' => '本文は400文字以内で入力してください',
         ];
     }

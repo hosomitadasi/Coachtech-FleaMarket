@@ -16,6 +16,7 @@
         <a href="{{ route('chat.view', $other->id) }}" class="side-item">
             {{ $other->name }}
         </a>
+        @endforeach
     </div>
 
     <div class="main-chat">
@@ -46,10 +47,12 @@
 
                 @if($msg->user_id === Auth::id())
                 <div class="msg-actions">
-                    @if(!$msg->img_url) <button>編集</button> @endif
-                    <form action="/chat/delete/{{ $msg->id }}" method="POST">
+                    @if(!$msg->img_url)
+                    <button type="button" class="edit-btn" data-id="{{ $msg->id }}" data-text="{{ $msg->text }}">編集</button>
+                    @endif
+                    <form action="{{ route('chat.delete', $msg->id) }}" method="POST" style="display:inline;">
                         @csrf @method('DELETE')
-                        <button type="submit">削除</button>
+                        <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
                     </form>
                 </div>
                 @endif
@@ -57,12 +60,45 @@
             @endforeach
         </div>
 
-        <form action="/chat/{{ $item->id }}" method="POST" enctype="multipart/form-data" class="chat-form">
+        <form action="/chat/{{ $item->id }}" method="POST" enctype="multipart/form-data" class="chat-form" id="chat-form">
             @csrf
-            <textarea name="text" placeholder="取引メッセージを記入してください"></textarea>
+            <input type="hidden" name="message_id" id="edit-id">
+            <textarea name="text" id="chat-textarea" placeholder="取引メッセージを記入してください"></textarea>
             <input type="file" name="img_url" id="chat-file">
-            <button type="submit">送信</button>
+            <button type="submit"><img id="submit" class="input_button" src="{{ asset('img/input_button.png') }}" alt=""></button>
         </form>
+
+        @if ($errors->any())
+        <div id="error-messages" data-errors="{{ implode('\n', $errors->all()) }}" style="display:none;"></div>
+        @endif
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const errorDiv = document.getElementById('error-messages');
+        if (errorDiv) {
+            alert(errorDiv.dataset.errors);
+        }
+
+        const editBtns = document.querySelectorAll('.edit-btn');
+        const textarea = document.getElementById('chat-textarea');
+        const form = document.getElementById('chat-form');
+        const editIdInput = document.getElementById('edit-id');
+
+        editBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const text = this.dataset.text;
+
+                textarea.value = text;
+                textarea.focus();
+
+                form.action = `/chat/update/${id}`;
+
+                document.getElementById('submit-btn').innerText = '更新';
+            });
+        });
+    });
+</script>
 @endsection

@@ -18,7 +18,8 @@ class SoldItem extends Model
         'item_id',
         'sending_postcode',
         'sending_address',
-        'sending_building'
+        'sending_building',
+        'status',
     ];
 
     public function user()

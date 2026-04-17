@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 // 追加したController
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\EvaluationController;
 
 Route::get('/', [ItemController::class, 'index'])->name('items.list');
 Route::get('/item/{item}', [ItemController::class, 'detail'])->name('item.detail');
@@ -36,7 +37,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/chat/{item_id}', [ChatController::class, 'chatView'])->name('chat.view');
     Route::post('/chat/{item_id}', [ChatController::class, 'chatCreate']);
     Route::post('/chat/update/{message_id}', [ChatController::class, 'chatUpdate']);
-    Route::delete('/chat/delete?{message_id}', [ChatController::class, 'chatDelete']);
+    Route::delete('/chat/delete{message_id}', [ChatController::class, 'chatDelete'])->name('chat.delete');
+    Route::post('/evaluation/{item_id}', [EvaluationController::class, 'store'])->name('evaluation.store');
 });
 
 Route::post('login', [AuthenticatedSessionController::class, 'store'])->middleware('email');
