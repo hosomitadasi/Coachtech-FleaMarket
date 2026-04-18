@@ -91,13 +91,11 @@ class Item extends Model
 
     // 以降追加機能部分
 
-    // その商品に紐づくチャット履歴
     public function messages()
     {
         return $this->hasMany(Message::class);
     }
 
-    // その商品に紐づく評価（通常、1つの商品に評価は1〜2件）
     public function evaluations()
     {
         return $this->hasMany(Evaluation::class);

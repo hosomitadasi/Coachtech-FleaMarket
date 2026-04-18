@@ -24,8 +24,8 @@
             <img src="{{ $partner->profile->img_url ? Storage::url($partner->profile->img_url) : asset('img/icon.png') }}" class="user__icon">
             <span>「{{ $partner->name }}」さんとの取引画面</span>
 
-            @if($item->soldItem->user_id === Auth::id())
-            <a href="/evaluation/{{ $item->id }}" class="btn-complete">取引を完了する</a>
+            @if($item->soldItem->user_id === Auth::id() && $item->soldItem->status === 0)
+            <button type="button" class="btn-complete" id="complete-btn">取引を完了する</button>
             @endif
         </div>
 
@@ -74,31 +74,77 @@
     </div>
 </div>
 
+@php
+$isSeller = ($item->user_id === Auth::id());
+$alreadyRated = \App\Models\Evaluation::where('item_id', $item->id)->where('evaluator_id', Auth::id())->exists();
+$showAutoModal = ($isSeller && $item->soldItem->status === 1 && !$alreadyRated);
+@endphp
+
+<div id="evaluation-modal" class="modal-overlay" style="{{ $showAutoModal ? 'display: flex;' : 'display: none;' }}">
+    <div class="evaluation-modal">
+        <h3>取引が完了しました。</h3>
+        <p>今回の取引相手はどうでしたか？</p>
+        <form action="{{ route('evaluation.store', $item->id) }}" method="POST">
+            @csrf
+            <div class="star-rating">
+                @for ($i = 5; $i >= 1; $i--)
+                <input type="radio" id="star{{ $i }}" name="star" value="{{ $i }}" required>
+                <label for="star{{ $i }}">★</label>
+                @endfor
+            </div>
+            <button type="submit" class="btn-send-eval">送信する</button>
+            @if(!$showAutoModal)
+            <button type="button" id="close-modal" class="btn-close">キャンセル</button>
+            @endif
+        </form>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const errorDiv = document.getElementById('error-messages');
-        if (errorDiv) {
+        if (errorDiv && errorDiv.dataset.errors) {
             alert(errorDiv.dataset.errors);
         }
 
         const editBtns = document.querySelectorAll('.edit-btn');
         const textarea = document.getElementById('chat-textarea');
         const form = document.getElementById('chat-form');
-        const editIdInput = document.getElementById('edit-id');
 
         editBtns.forEach(btn => {
             btn.addEventListener('click', function() {
                 const id = this.dataset.id;
                 const text = this.dataset.text;
+                if (textarea) {
+                    textarea.value = text;
+                    textarea.focus();
+                }
+                if (form) {
+                    form.action = `/chat/update/${id}`;
+                }
 
-                textarea.value = text;
-                textarea.focus();
-
-                form.action = `/chat/update/${id}`;
-
-                document.getElementById('submit-btn').innerText = '更新';
+                const submitIcon = document.getElementById('submit');
+                if (submitIcon) {
+                    submitIcon.style.filter = "hue-rotate(180deg)";
+                }
             });
         });
+
+        const completeBtn = document.getElementById('complete-btn');
+        const modal = document.getElementById('evaluation-modal');
+        const closeModal = document.getElementById('close-modal');
+
+        if (completeBtn && modal) {
+            completeBtn.addEventListener('click', function() {
+                modal.style.display = 'flex';
+            });
+        }
+
+        if (closeModal && modal) {
+            closeModal.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+        }
     });
 </script>
 @endsection

@@ -49,19 +49,16 @@ class User extends Authenticatable implements MustVerifyEmail
 
     // 以降追加機能部分
 
-    // チャット機能
     public function messages()
     {
         return $this->hasMany(Message::class);
     }
 
-    // 自分が受け取った評価機能
     public function evaluations()
     {
         return $this->hasMany(Evaluation::class, 'user_id');
     }
 
-    // 自分が行った評価機能
     public function reviewsDone()
     {
         return $this->hasMany(Evaluation::class, 'evaluator_id');
@@ -69,7 +66,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function averageStars()
     {
-        $avg = \App\Models\Evaluation::where('user_id', $this->id)->avg('star');
+        $avg = \App\Models\Evaluation::where('user_id', $this->id)->avg('stars');
         return $avg ? round($avg) : null;
     }
 }

@@ -12,10 +12,10 @@ class CreateSoldItemsTable extends Migration
         Schema::create('sold_items', function (Blueprint $table) {
             $table->foreignId('item_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->integer('status')->default(0);
             $table->string('sending_postcode');
             $table->string('sending_address');
             $table->string('sending_building')->nullable();
-            $table->integer('status')->default(0)->after('user_id');
             $table->timestamps();
         });
     }
