@@ -45,7 +45,9 @@
             <li class="{{ $page == 'chat' ? 'active' : '' }}">
                 <a href="/mypage?page=chat" style="color: {{ $page == 'chat' ? 'red' : '' }}">
                     取引中の商品
-                    {{-- 全体の通知件数などがあればここに表示 --}}
+                    @if(isset($totalUnread) && $totalUnread > 0)
+                    <span class="nav-unread-badge">{{ $totalUnread }}</span>
+                    @endif
                 </a>
             </li>
         </ul>

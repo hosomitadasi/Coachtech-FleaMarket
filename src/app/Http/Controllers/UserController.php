@@ -69,8 +69,15 @@ class UserController extends Controller
                     $query->where('user_id', $user->id)
                         ->orWhereHas('soldItem', fn($q) => $q->where('user_id', $user->id));
                 })
-                ->latest('updated_at')
+                ->withCount(['messages as unread_messages_count' => function ($query) {
+                    $query->where('user_id', '!=', Auth::id())->whereNull('read_at');
+                }])
+                ->orderByRaw('(SELECT MAX(created_at) FROM messages WHERE messages.item_id = items.id) DESC')
+                ->orderBy('updated_at', 'desc')
                 ->get();
+
+            $totalUnread = $items->sum('unread_messages_count');
+            view()->share('totalUnread', $totalUnread);
         } else {
             $items = SoldItem::where('user_id', $user->id)->get()->map(fn($si) => $si->item);
         }

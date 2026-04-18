@@ -17,6 +17,11 @@ class ChatController extends Controller
         $user = Auth::user();
         $item = Item::with(['soldItem', 'messages.user.profile'])->findOrFail($item_id);
 
+        Message::where('item_id', $item_id)
+            ->where('user_id', '!=', $user->id)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
         $partner = ($item->user_id === $user->id)
             ? User::find($item->soldItem->user_id)
             : $item->user;

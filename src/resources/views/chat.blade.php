@@ -3,6 +3,7 @@
 @section('title','取引チャットページ')
 
 @section('css')
+<link rel="stylesheet" href="{{ asset('/css/index.css') }}">
 <link rel="stylesheet" href="{{ asset('/css/chat.css')  }}">
 @endsection
 
@@ -39,11 +40,24 @@
 
         <div class="message-area">
             @foreach($item->messages as $msg)
-            <div class="message-box {{ $msg->user_id === Auth::id() ? 'my-message' : 'partner-message' }}">
-                <p>{{ $msg->text }}</p>
-                @if($msg->img_url)
-                <img src="{{ Storage::url($msg->img_url) }}" class="chat-img">
-                @endif
+            <div class="message-group {{ $msg->user_id === Auth::id() ? 'my-msg-group' : 'partner-msg-group' }}">
+
+                <div class="msg-user-info">
+                    @if($msg->user_id === Auth::id())
+                    <span class="msg-user-name">{{ Auth::user()->name }}</span>
+                    <img src="{{ Auth::user()->profile->img_url ? Storage::url(Auth::user()->profile->img_url) : asset('img/icon.png') }}" class="msg-user-icon">
+                    @else
+                    <img src="{{ $partner->profile->img_url ? Storage::url($partner->profile->img_url) : asset('img/icon.png') }}" class="msg-user-icon">
+                    <span class="msg-user-name">{{ $partner->name }}</span>
+                    @endif
+                </div>
+
+                <div class="message-box">
+                    <p>{{ $msg->text }}</p>
+                    @if($msg->img_url)
+                    <img src="{{ Storage::url($msg->img_url) }}" class="chat-img">
+                    @endif
+                </div>
 
                 @if($msg->user_id === Auth::id())
                 <div class="msg-actions">
@@ -52,7 +66,7 @@
                     @endif
                     <form action="{{ route('chat.delete', $msg->id) }}" method="POST" style="display:inline;">
                         @csrf @method('DELETE')
-                        <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
+                        <button type="submit" class="delete-btn" onclick="return confirm('本当に削除しますか？')">削除</button>
                     </form>
                 </div>
                 @endif
@@ -60,12 +74,24 @@
             @endforeach
         </div>
 
+        @if ($errors->any())
+        <div class="chat-error-container">
+            @foreach ($errors->all() as $error)
+            <p class="chat-error-message">{{ $error }}</p>
+            @endforeach
+        </div>
+        @endif
         <form action="/chat/{{ $item->id }}" method="POST" enctype="multipart/form-data" class="chat-form" id="chat-form">
             @csrf
             <input type="hidden" name="message_id" id="edit-id">
             <textarea name="text" id="chat-textarea" placeholder="取引メッセージを記入してください"></textarea>
+
+            <label for="chat-file" class="custom-file-upload">画像を追加</label>
             <input type="file" name="img_url" id="chat-file">
-            <button type="submit"><img id="submit" class="input_button" src="{{ asset('img/input_button.png') }}" alt=""></button>
+
+            <button type="submit" class="btn-send">
+                <img id="submit" class="input_button" src="{{ asset('img/input_button.png') }}" alt="送信">
+            </button>
         </form>
 
         @if ($errors->any())
@@ -82,30 +108,44 @@ $showAutoModal = ($isSeller && $item->soldItem->status === 1 && !$alreadyRated);
 
 <div id="evaluation-modal" class="modal-overlay" style="{{ $showAutoModal ? 'display: flex;' : 'display: none;' }}">
     <div class="evaluation-modal">
-        <h3>取引が完了しました。</h3>
-        <p>今回の取引相手はどうでしたか？</p>
+        <div class="modal-header">
+            <h3>取引が完了しました。</h3>
+        </div>
+        <div class="modal-body">
+            <p class="eval-sub-text">今回の取引相手はどうでしたか？</p>
+        </div>
         <form action="{{ route('evaluation.store', $item->id) }}" method="POST">
             @csrf
             <div class="star-rating">
-                @for ($i = 5; $i >= 1; $i--)
-                <input type="radio" id="star{{ $i }}" name="star" value="{{ $i }}" required>
-                <label for="star{{ $i }}">★</label>
-                @endfor
+                @for ($i = 1; $i <= 5; $i++)
+                    <input type="radio" id="star{{ $i }}" name="star" value="{{ $i }}" required>
+                    <label for="star{{ $i }}">
+                        <img src="{{ asset('img/ignore_star.png') }}" class="star-img" data-value="{{ $i }}">
+                    </label>
+                    @endfor
             </div>
-            <button type="submit" class="btn-send-eval">送信する</button>
-            @if(!$showAutoModal)
-            <button type="button" id="close-modal" class="btn-close">キャンセル</button>
-            @endif
+            <div class="modal-footer">
+                <button type="submit" class="btn-send-eval">送信する</button>
+            </div>
         </form>
     </div>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const errorDiv = document.getElementById('error-messages');
-        if (errorDiv && errorDiv.dataset.errors) {
-            alert(errorDiv.dataset.errors);
-        }
+        const stars = document.querySelectorAll('.star-img');
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const val = this.dataset.value;
+                stars.forEach(s => {
+                    if (parseInt(s.dataset.value) <= parseInt(val)) {
+                        s.src = "{{ asset('img/rate_star.png') }}";
+                    } else {
+                        s.src = "{{ asset('img/ignore_star.png') }}";
+                    }
+                });
+            });
+        });
 
         const editBtns = document.querySelectorAll('.edit-btn');
         const textarea = document.getElementById('chat-textarea');
@@ -121,6 +161,11 @@ $showAutoModal = ($isSeller && $item->soldItem->status === 1 && !$alreadyRated);
                 }
                 if (form) {
                     form.action = `/chat/update/${id}`;
+                }
+
+                const idField = document.getElementById('edit-id');
+                if (idField) {
+                    idField.value = id;
                 }
 
                 const submitIcon = document.getElementById('submit');
