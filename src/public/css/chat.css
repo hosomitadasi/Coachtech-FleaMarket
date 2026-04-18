@@ -285,8 +285,8 @@
 }
 
 .evaluation-modal {
-    background: #FFFFF0;
-    border: 1px solid #ccc;
+    background: #FDFCE6;
+    border: 1px solid #000000;
     border-radius: 15px;
     width: 400px;
     overflow: hidden;
@@ -294,9 +294,8 @@
 }
 
 .modal-header {
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #000000;
     padding: 15px;
-    background: #fff;
 }
 
 .modal-header h3 {
@@ -335,7 +334,7 @@
 .modal-footer {
     display: flex;
     justify-content: flex-end;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #000000;
     padding-top: 15px;
     margin-top: 10px;
 }
@@ -345,7 +344,7 @@
     color: white;
     border: none;
     padding: 8px 25px;
-    border-radius: 8px;
+    border-radius: 5px;
     font-weight: bold;
     cursor: pointer;
 }

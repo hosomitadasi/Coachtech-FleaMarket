@@ -1,4 +1,8 @@
-# 環境構築
+## 概要
+
+　以前学習していたフリマアプリに、購入者と出品者間でチャットでのやり取りを行う機能と、それぞれの対応を評価し合う機能を追加しました。
+
+## 環境構築
 
 1. Gitでリンクをコピー、または下記に記載のURLをコピーした後、ターミナルでプロジェクトディレクトリを作成したら直下で以下のコマンドを実行してください。
 
@@ -12,31 +16,23 @@ git clone https://github.com/hosomitadasi/CoachtechPro-FleaMarket.git
 make init
 ```
 
-3．利用されているmailtrapとstripeのキーをdocker-compose.ymlと.envに追加してください。
+## 作成画像
 
-## メール認証
+プロフィール画面
+![alt](images/mypage.png)
 
-mailtrapというツールを使用しています。<br>
-以下のリンクから会員登録をしてください。　<br>
-https://mailtrap.io/
+取引チャット画面
+![alt](images/testpage.png)
 
-メールボックスのIntegrationsから 「laravel 7.x and 8.x」を選択し、　<br>
-.envファイルのMAIL_MAILERからMAIL_ENCRYPTIONまでの項目をコピー＆ペーストしてください。　<br>
-MAIL_FROM_ADDRESSは任意のメールアドレスを入力してください。　
+## 使用技術一覧
 
-## Stripeについて
+・laravel:8.83.27
+・php:8.2.30
+・nginx:1.21.1
+・mysql:8.0.26
+・
 
-コンビニ支払いとカード支払いのオプションがありますが、決済画面にてコンビニ支払いを選択しますと、レシートを印刷する画面に遷移します。そのため、カード支払いを成功させた場合に意図する画面遷移が行える想定です。<br>
-
-また、StripeのAPIキーは以下のように設定をお願いいたします。
-
-```
-STRIPE_PUBLIC_KEY="パブリックキー"
-STRIPE_SECRET_KEY="シークレットキー"
-```
-
-以下のリンクは公式ドキュメントです。<br>
-https://docs.stripe.com/payments/checkout?locale=ja-JP
+3．利用されているメールアプリとstripeのキーをdocker-compose.ymlと.envに追加してください。
 
 ## テーブル仕様
 
@@ -169,10 +165,10 @@ https://docs.stripe.com/payments/checkout?locale=ja-JP
 ## ER図
 
 取引チャット実装前
-![alt](ER.png)
+![alt](images/ER.png)
 
 取引チャット実装後
-![alt](chat.png)
+![alt](images/chat.png)
 
 ## テストアカウント
 
@@ -193,21 +189,3 @@ email:user3@example.com
 password:
 
 ---
-
-## PHPUnitを利用したテストに関して
-
-以下のコマンド:
-
-```
-//テスト用データベースの作成
-docker-compose exec mysql bash
-mysql -u root -p
-//パスワードはrootと入力
-create database test_database;
-
-docker-compose exec php bash
-php artisan migrate:fresh --env=testing
-./vendor/bin/phpunit
-```
-
-※.env.testingにもStripeのAPIキーを設定してください。

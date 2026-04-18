@@ -109,7 +109,8 @@ $showAutoModal = ($isSeller && $item->soldItem->status === 1 && !$alreadyRated);
 <div id="evaluation-modal" class="modal-overlay" style="{{ $showAutoModal ? 'display: flex;' : 'display: none;' }}">
     <div class="evaluation-modal">
         <div class="modal-header">
-            <h3>取引が完了しました。</h3>
+            <p>取引が完了しました。
+            <p>
         </div>
         <div class="modal-body">
             <p class="eval-sub-text">今回の取引相手はどうでしたか？</p>
